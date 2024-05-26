@@ -2,7 +2,21 @@ document.addEventListener("DOMContentLoaded",()=>{
 
    const main  = document.querySelector(".main")
    main.style.display = "none"
+   
+   const start = document.querySelector(".start-game")
+   const quit = document.querySelector("#quit-button")
 
+
+   quit.onclick = ()=>{
+
+    main.style.display = "none"
+    start.style.display = "block"
+    clearGrid()
+    GameBoard.clearBoard()
+    body.style.opacity = 1
+    dialog.close()
+
+  }
 
    const x = document.querySelector("#x")
    const o = document.querySelector("#o")
@@ -67,7 +81,6 @@ document.addEventListener("DOMContentLoaded",()=>{
         message.textContent = "Please Select the Symbol"
     }
     else{
-     const start = document.querySelector(".start-game")
      start.style.display = "none"
 
      main.style.display = "flex"
@@ -97,8 +110,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   const p1smb = document.querySelector("#p1")
   const p2smb = document.querySelector("#p2")
 
+
+  let p1Score = document.querySelector("#p1-score")
+  let p2Score = document.querySelector("#p2-score")
+  let tie = document.querySelector("#tie")
   
   let currentMove = "x"
+  let score = 0
   squares.forEach(element => {
    
      element.onclick = ()=> {
@@ -106,7 +124,10 @@ document.addEventListener("DOMContentLoaded",()=>{
         let r = parseInt(element.dataset.index[0])
         let c = parseInt(element.dataset.index[1])
 
-        if(GameBoard.board[r][c] == 0){
+        let board = GameBoard.getBoard()
+
+        if(board[r][c] == 0){
+
 
         if(currentMove == "x"){
            element.innerHTML = `<svg  width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -125,44 +146,25 @@ document.addEventListener("DOMContentLoaded",()=>{
             currentMove = "x"
         }
 
-        let status = Game.getGameStatus(GameBoard.board)
+        let status = Game.getGameStatus(GameBoard.getBoard())
         console.log(status)
 
-        let p1Score = document.querySelector("#p1-score")
-        let p2Score = document.querySelector("#p2-score")
-        let tie = document.querySelector("#tie")
-        let tie_count = 0
+       
+        let tie_count = parseInt(tie.textContent) || 0
 
-        let score = 0
 
-        if(status == "x"){
-            clearGrid()
-            GameBoard.clearBoard()
-            GameBoard.display()
-            if(selectedP1 == status){
+        if (status === "x" || status === "o") {
+            clearGrid();
+            GameBoard.clearBoard();
 
-                score = p1.updateScore()
-                p1Score.textContent = score
+            const winner = status === selectedP1 ? p1 : p2;
+            score = winner.updateScore();
+
+            if (winner === p1) {
+                p1Score.textContent = score;
+            } else {
+                p2Score.textContent = score;
             }
-            else{
-                score = p2.updateScore()
-                p2Score.textContent = score
-            }
-
-
-        }
-        if(status == "o"){
-            clearGrid()
-            GameBoard.clearBoard()
-            if(selectedP1  == status){
-                score = p1.updateScore()
-                p1Score.textContent = score
-            }
-            else{
-                score = p2.updateScore()
-                p2Score.textContent = score
-            }
-            status = Game.getGameStatus(GameBoard.board)
         }
 
         if(status == "Draw"){
@@ -170,14 +172,50 @@ document.addEventListener("DOMContentLoaded",()=>{
             GameBoard.clearBoard()
             tie.textContent = ++tie_count
         }
-
     }
-
-
     }
 
   })
 
+  const end = document.querySelector("#end-button")
+  const dialog = document.querySelector("#result-dialog")
+  const body = document.querySelector("body")
+  end.onclick = ()=>{
+    dialog.showModal()
+    body.style.opacity = 0.3;
+
+    const winner = document.querySelector("#winner-name")
+    let name
+    if(parseInt( document.querySelector("#p1-score").textContent) > parseInt( document.querySelector("#p2-score").textContent)){
+        name = "Winner : Player 1"
+    }
+    else if(parseInt(document.querySelector("#p1-score").textContent) > parseInt( document.querySelector("#p2-score").textContent)){
+        name = "Winner : Player 2"
+    }
+    else{
+        name = "Draw"
+    }
+
+    winner.textContent = name;
+  }
+
+  const newGame = document.querySelector("#back-button")
+
+  newGame.onclick = ()=>{
+     clearGrid()
+     GameBoard.clearBoard()
+     body.style.opacity = 1;
+
+     p1Score.textContent = 0
+     p2Score.textContent = 0
+     tie.textContent = 0
+     score  = 0
+     p1.resetScore()
+     p2.resetScore()
+     dialog.close()
+  }
+
+  
   const reset = document.querySelector("#restart")
 
   reset.onclick = ()=>{
@@ -190,8 +228,6 @@ document.addEventListener("DOMContentLoaded",()=>{
         element.innerHTML = ""
     })
   }
-   
-
 
 })
 
@@ -218,6 +254,10 @@ const GameBoard  = (function(){
         }
     }
 
+    function getBoard(){
+        return board.map(row => row.slice())
+    }
+
     function clearBoard(){
       for(let i = 0;i<board.length;i++){
         for(let j = 0;j<board[i].length;j++){
@@ -225,7 +265,7 @@ const GameBoard  = (function(){
         }
       }
     }
-    return {updateBoard,display,board,clearBoard}
+    return {updateBoard,display,clearBoard,getBoard}
 })()
 
 
@@ -241,11 +281,18 @@ function Player(choosedSymbol){
      score++
      return score
    }
-   return {playMove,symbol,updateScore}
+
+   function resetScore(){
+     score = 0
+   }
+   return {playMove,symbol,updateScore,resetScore}
 }
 
 
 const Game = (function(){
+
+
+    // for playing the Game On terminal 
 
     function start(){
         const symbol = prompt("Choose a Symbol (x or o): ")
@@ -290,6 +337,8 @@ const Game = (function(){
         console.log(status)
         
     }
+    
+    // Getting game current status 
 
     function getGameStatus(board){
         for (let row = 0; row < 3; row++) {
@@ -330,7 +379,3 @@ const Game = (function(){
     return {start,getGameStatus}
 
 })()
-
-// alert(Game.start())
-
-console.log(GameBoard.board)

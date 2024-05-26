@@ -1,9 +1,37 @@
 * {
     margin: 0;
+    
     box-sizing: border-box;
     /* border: 2px solid red; */
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+@font-face {
+    font-family: "myFont";
+    src: url("TechnoRaceItalic-eZRWe.otf")
+     format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.fredoka-regular{
+  font-family: "Fredoka", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings:
+    "width" 100;
+}
+  
+
+
+.bangers-regular {
+    font-family: "Bangers", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+  
 
 .permanent-marker-regular {
     font-family: "Permanent Marker", cursive;
@@ -12,6 +40,7 @@
 }
   
 body{
+    font-family: "Fredoka",sans-serif;
     display: flex;
     gap: 50px;
     color: white;
@@ -31,9 +60,11 @@ body{
     padding: var(--default-padding);
 }
 
+
 #logo{
    margin-right: auto;
 }
+
 
 .start-game{
     align-self: center;
@@ -48,7 +79,7 @@ body{
     color: white;
 }
 
-#dialog{
+#result-dialog{
     align-self: center;
     justify-self: center;
     background-color: #1d4ed8;
@@ -88,11 +119,13 @@ p,label{
     margin-right: auto;
     margin-left: 180px;
 }
+
 #info{
     display: flex;
     gap: 10px;
     flex-direction: column;
 }
+
 svg {
      fill:none;
 }
@@ -168,4 +201,50 @@ svg {
     align-items: center;
     background-color: white;
     color: black;
+}
+
+#result-dialog{
+    width: 250px;
+    background-color: #1e3a8a;
+    border: none;
+    /* margin-bottom: auto; */
+    position: fixed;
+    top : 0px;
+    border-radius: 10px;
+}
+
+#winner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-over{
+    font-family: 'myFont';
+    color: yellow;
+    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-width: 1px;
+}
+
+#game-over-buttons{
+    display: flex;
+    margin-top: 15px;
+    justify-content: space-between;
+    padding: 5px;
+    text-align: center;
+}
+
+#quit-button , #back-button{
+    border-radius: 7px;
+    padding: 7px;
+    font-size: 0.8rem;
+    border: none;
+    font-weight: 700;
+    background-color: red;
+    color:white;
+}
+
+#back-button{
+    background-color:  green;
 }
